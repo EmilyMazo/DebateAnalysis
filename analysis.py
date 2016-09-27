@@ -1,45 +1,51 @@
 import numpy as np
+import codecs
 import sklearn 
 import nltk
 from nltk.tree import Tree
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import operator
+import sys  
+
+reload(sys)  
+sys.setdefaultencoding('utf8')
+
 #import matplotlib.pyplot as plt
 
 def AttributeLines():
-    f = open('debate_transcript.txt', 'r')
+    f = codecs.open('debate_transcript.txt', 'r')
     lines = f.readlines()
-    h = open('hillary_lines.txt', 'w')
-    t = open('trump_lines.txt', 'w')
-    m = open('moderator_lines.txt', 'w')
+    h = codecs.open('hillary_lines.txt', 'w')
+    t = codecs.open('trump_lines.txt', 'w')
+    m = codecs.open('moderator_lines.txt', 'w')
     count = 0
     for line in lines:
         line = line.strip()
         line = line.split(' ')
         if line == ['']:
             continue
-        if 'Clinton:' in line:
+        if 'CLINTON:' in line:
             sentence = ''
             for word in line:
-                if word == 'Clinton:':
+                if word == 'CLINTON:':
                     continue
                 sentence = sentence + ' ' + word
                 if word == 'Trump':
                     count += 1
             h.write(sentence)
             h.write('\n')
-        elif 'Trump:' in line:
+        elif 'TRUMP:' in line:
             sentence = ''
             for word in line:
-                if word == 'Trump:':
+                if word == 'TRUMP:':
                     continue
                 sentence = sentence + ' ' + word
             t.write(sentence)
             t.write('\n')
-        elif 'Holt:' in line:
+        elif 'HOLT:' in line:
             sentence = ''
             for word in line:
-                if word == 'Holt:':
+                if word == 'HOLT:':
                     continue
                 sentence = sentence + ' ' + word
             m.write(sentence)
@@ -47,7 +53,7 @@ def AttributeLines():
     print count
 
 def AnalyzeLines(filename):
-    h = open(filename, 'r')
+    h = codecs.open(filename, 'r')
     lines = h.readlines()
     named_entities = {}
     sentiment_nums = np.zeros(len(lines))    
