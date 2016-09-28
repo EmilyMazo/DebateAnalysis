@@ -69,6 +69,10 @@ def AttributeLines():
         
 
 def AnalyzeLines(filename):
+    ''' This method splits a candidate's text into statements (as separated by the NYT with newlines)
+    and finds the sentiment score (according to the VADER sentiment analyzer model) of each, and averages them
+    as well as stores them with their line number (for plotting). This method also extracts the named named entities 
+    of each statement.'''
     h = codecs.open(filename, 'r')
     lines = h.readlines()
     named_entities = {}
@@ -93,6 +97,7 @@ def AnalyzeLines(filename):
 
 
 def FindNamedEntities(line):
+    ''' This method uses NLTK's built-in chunker and POS-tagger to extract named entities '''
     prev = None
     continuous_chunk = []
     current_chunk = []
@@ -111,6 +116,8 @@ def FindNamedEntities(line):
 
 
 def FindSentiment(line):
+    ''' This method uses VADER's trained sentiment analysis model to create compound sentiment scores 
+    for each line. '''
     sid = SentimentIntensityAnalyzer()
     ss = sid.polarity_scores(line)
     return ss["compound"]
@@ -162,6 +169,7 @@ def DrawSentGraphs(sents1, sents2):
 if __name__ == "__main__": 
     # Scrape debate transcript for lines from the three players
     AttributeLines()
+    # Extract sentiment and NE data for each speaker
     trump_NE, trump_sent, trump_sent_nums = AnalyzeLines('trump_lines.txt')
     hillary_NE, hillary_sent, hillary_sent_nums = AnalyzeLines('hillary_lines.txt')
     print "Hillary sent: " + str(hillary_sent)
@@ -170,4 +178,5 @@ if __name__ == "__main__":
     trump_sorted_NE = sorted(trump_NE.items(), key=operator.itemgetter(1)) 
     print hillary_sorted_NE[-1]
     print trump_sorted_NE[-1]
+    # Plot sentiment vs. time for each speaker
     DrawSentGraphs(hillary_sent_nums, trump_sent_nums)
